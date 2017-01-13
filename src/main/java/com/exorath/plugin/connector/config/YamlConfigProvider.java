@@ -16,6 +16,7 @@
 
 package com.exorath.plugin.connector.config;
 
+import com.exorath.plugin.connector.ConfigProvider;
 import com.exorath.plugin.connector.SimpleGameDescription;
 import com.exorath.service.connector.res.Filter;
 import com.exorath.service.translation.api.TranslatableString;
@@ -24,7 +25,6 @@ import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.HashMap;
 import java.util.List;
@@ -38,20 +38,23 @@ import java.util.stream.Collectors;
 public class YamlConfigProvider implements ConfigProvider {
     private FileConfiguration fileConfiguration;
 
-    private HashMap<Integer, GameDescription> gameBySlot = new HashMap<>();
+    private HashMap<Integer, GameDescription> gamesBySlot = new HashMap<>();
 
     public YamlConfigProvider(FileConfiguration fileConfiguration) {
         this.fileConfiguration = fileConfiguration;
+        reload();
     }
 
     @Override
     public void reload() {
-        gameBySlot.clear();
+        gamesBySlot.clear();
+
         ConfigurationSection configurationSection = fileConfiguration.getConfigurationSection("games");
         if(configurationSection == null){
             Bukkit.getLogger().log(Level.WARNING, "Did not find games (connectorplugin)");
             return;
         }
+
         for (String key : configurationSection.getKeys(false))
             loadGameSection(configurationSection.getConfigurationSection(key));
     }
@@ -59,11 +62,14 @@ public class YamlConfigProvider implements ConfigProvider {
     private void loadGameSection(ConfigurationSection config) {
         if(config == null)
             return;
+        if(!config.isInt("slot"))
+            return;
 
         SimpleGameDescription simpleGameDescription = new SimpleGameDescription();
 
-        String name = config.getString("name", "Unknown name");
+        String name = config.getString("name", null);
         simpleGameDescription.setName(new TranslatableString(name, name));
+
 
         String shortDescription = config.getString("description.short", null);
         if (shortDescription != null)
@@ -77,7 +83,9 @@ public class YamlConfigProvider implements ConfigProvider {
                             .collect(Collectors.toList()));
 
         simpleGameDescription.setFilter(getFilter(config.getConfigurationSection("filter")));
-        simpleGameDescription.setPlainItemStack(config.getItemStack("plainStack", DEFAULT_PLAIN_IS));
+        simpleGameDescription.setPlainItemStack(config.getItemStack("plainStack", null));
+
+        gamesBySlot.put(config.getInt("slot"), simpleGameDescription);
     }
 
     private Filter getFilter(ConfigurationSection filterSection){
@@ -90,9 +98,8 @@ public class YamlConfigProvider implements ConfigProvider {
         return filter;
     }
     @Override
-    public HashMap<Integer, GameDescription> getGameBySlot() {
-        return gameBySlot;
+    public HashMap<Integer, GameDescription> getGamesBySlot() {
+        return gamesBySlot;
     }
 
-    private static final ItemStack DEFAULT_PLAIN_IS = new ItemStack(Material.EMERALD);
 }

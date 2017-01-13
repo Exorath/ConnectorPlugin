@@ -16,15 +16,15 @@
 
 package com.exorath.plugin.connector;
 
-import org.bukkit.plugin.java.JavaPlugin;
+import com.exorath.plugin.connector.config.GameDescription;
+
+import java.util.HashMap;
 
 /**
  * Created by toonsev on 1/11/2017.
  */
-public class Main extends JavaPlugin {
-    public static final String TRANSLATE_PACKAGE_ID = "plugin.connector";
-    @Override
-    public void onEnable() {
+public interface ConfigProvider {
+    HashMap<Integer, GameDescription> getGamesBySlot();
 
-    }
+    void reload();
 }

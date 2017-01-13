@@ -14,15 +14,14 @@
  *    limitations under the License.
  */
 
-package com.exorath.plugin.connector.config;
+package com.exorath.plugin.connector;
 
-import java.util.HashMap;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 
 /**
- * Created by toonsev on 1/11/2017.
+ * Created by toonsev on 1/13/2017.
  */
-public interface ConfigProvider {
-    HashMap<Integer, GameDescription> getGameBySlot();
-
-    void reload();
+public interface InventoryProvider {
+    Inventory getGameInv(Player player);
 }
