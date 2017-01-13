@@ -18,6 +18,7 @@ package com.exorath.plugin.connector.config;
 
 import com.exorath.service.connector.res.Filter;
 import com.exorath.service.translation.api.TranslatableString;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
@@ -48,6 +49,13 @@ public interface GameDescription {
      * @return
      */
     Filter getFilter();
+
+    /**
+     * Gets an itemstack without name or lore.
+     * @return
+     */
+    ItemStack getPlainItemStack();
+
 
 
 }

@@ -16,9 +16,13 @@
 
 package com.exorath.plugin.connector.config;
 
+import java.util.HashMap;
+
 /**
  * Created by toonsev on 1/11/2017.
  */
-public class ConfigProvider {
+public interface ConfigProvider {
+    HashMap<Integer, GameDescription> getGameBySlot();
 
+    void reload();
 }
