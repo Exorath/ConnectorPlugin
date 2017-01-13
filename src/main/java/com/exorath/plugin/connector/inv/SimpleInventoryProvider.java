@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 /**
  * Todo: Maybe rate limit and cache inventory creation?
  * TODO: Create static inventory registry.
+ * TODO: Inject player count
  * Created by toonsev on 1/13/2017.
  */
 public class SimpleInventoryProvider implements InventoryProvider {
