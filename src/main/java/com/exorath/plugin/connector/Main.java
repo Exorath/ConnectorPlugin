@@ -20,6 +20,7 @@ import com.exorath.plugin.connector.config.ConfigProvider;
 import com.exorath.plugin.connector.config.YamlConfigProvider;
 import com.exorath.plugin.connector.inv.InventoryProvider;
 import com.exorath.plugin.connector.inv.SimpleInventoryProvider;
+import com.exorath.service.connector.api.ConnectorServiceAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -29,22 +30,30 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Main extends JavaPlugin {
     public static final String TRANSLATE_PACKAGE_ID = "plugin.connector";
 
+    private static Main instance;
     private static InventoryRegistry inventoryRegistry;
 
     @Override
     public void onEnable() {
+        instance = this;
+        //Loads in the ymlconfig as a config provider
         ConfigProvider configProvider = new YamlConfigProvider(getConfig());
-        InventoryProvider inventoryProvider = new SimpleInventoryProvider(configProvider);
-
+        //creates an inventoryprovider with the config, this is responsible for creating inventories
+        InventoryProvider inventoryProvider = new SimpleInventoryProvider(configProvider, new ConnectorServiceAPI("http://localhost:8080"));//replace this after testing
+        //create an inventorymanager with the config, this is responsible for calling the inventoryprovider
         InventoryManager inventoryManager = new InventoryManager(configProvider, inventoryProvider);
         Bukkit.getPluginManager().registerEvents(inventoryManager, this);
-
-        inventoryRegistry = new InventoryRegistry();//using a static inventory event registry for now.
+        //Set up a static inventory registry for event propagation
+        inventoryRegistry = new InventoryRegistry();
         Bukkit.getPluginManager().registerEvents(inventoryRegistry, this);
     }
 
 
     public static InventoryRegistry getInventoryRegistry() {
         return inventoryRegistry;
+    }
+
+    public static Main getInstance() {
+        return instance;
     }
 }
