@@ -32,17 +32,24 @@ public class Main extends JavaPlugin {
 
     private static Main instance;
     private static InventoryRegistry inventoryRegistry;
+    private ConnectorServiceAPI connectorServiceAPI;
 
     @Override
     public void onEnable() {
         instance = this;
+        this.connectorServiceAPI = new ConnectorServiceAPI("http://localhost:8080");//replace this after testing
+        PlayerJoiner playerJoiner = new PlayerJoiner(connectorServiceAPI);
+
         //Loads in the ymlconfig as a config provider
         ConfigProvider configProvider = new YamlConfigProvider(getConfig());
         //creates an inventoryprovider with the config, this is responsible for creating inventories
-        InventoryProvider inventoryProvider = new SimpleInventoryProvider(configProvider, new ConnectorServiceAPI("http://localhost:8080"));//replace this after testing
+        InventoryProvider inventoryProvider = new SimpleInventoryProvider(configProvider, playerJoiner);
         //create an inventorymanager with the config, this is responsible for calling the inventoryprovider
         InventoryManager inventoryManager = new InventoryManager(configProvider, inventoryProvider);
         Bukkit.getPluginManager().registerEvents(inventoryManager, this);
+        //The commandManager is responsible for the /hub commands etc.
+        CommandManager commandManager = new CommandManager(configProvider, playerJoiner);
+        Bukkit.getPluginManager().registerEvents(commandManager, this);
         //Set up a static inventory registry for event propagation
         inventoryRegistry = new InventoryRegistry();
         Bukkit.getPluginManager().registerEvents(inventoryRegistry, this);

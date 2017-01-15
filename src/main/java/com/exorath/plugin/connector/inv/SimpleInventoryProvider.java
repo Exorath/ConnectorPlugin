@@ -17,6 +17,7 @@
 package com.exorath.plugin.connector.inv;
 
 import com.exorath.plugin.connector.InventoryListener;
+import com.exorath.plugin.connector.PlayerJoiner;
 import com.exorath.plugin.connector.config.ConfigProvider;
 import com.exorath.plugin.connector.Main;
 import com.exorath.plugin.connector.config.GameDescription;
@@ -44,12 +45,12 @@ import java.util.stream.Collectors;
  */
 public class SimpleInventoryProvider implements InventoryProvider {
     private ConfigProvider configProvider;
-    private ConnectorServiceAPI connectorServiceAPI;
+    private PlayerJoiner playerJoiner;
     private static final int THROTTLE_TIMEOUT = 40;
 
-    public SimpleInventoryProvider(ConfigProvider configProvider, ConnectorServiceAPI connectorServiceAPI) {
+    public SimpleInventoryProvider(ConfigProvider configProvider, PlayerJoiner playerJoiner) {
         this.configProvider = configProvider;
-        this.connectorServiceAPI = connectorServiceAPI;
+        this.playerJoiner = playerJoiner;
     }
 
     /**
@@ -129,18 +130,12 @@ public class SimpleInventoryProvider implements InventoryProvider {
                 return;
             }
             throttled = true;
-            String name = gameDescription.getName().translate(Main.TRANSLATE_PACKAGE_ID, event.getWhoClicked().getUniqueId().toString());
-            event.getWhoClicked().sendMessage(ChatColor.GREEN + JOINING_TRANS.translate(Main.TRANSLATE_PACKAGE_ID, event.getWhoClicked().getUniqueId().toString()).replaceAll("\\{\\{0\\}\\}", name));
+            //TODO: Check if this is thread safe (if it's not: check severity)
             Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(),
-                    () -> {
-                        String serverId = connectorServiceAPI.joinServer(event.getWhoClicked().getUniqueId().toString(), gameDescription.getFilter());
-                        if (serverId == null) {
-                            event.getWhoClicked().sendMessage(ChatColor.RED + NO_SERVER_FOUND_TRANS.translate(Main.TRANSLATE_PACKAGE_ID, event.getWhoClicked().getUniqueId().toString()));
-                            return;
-                        }
-                        event.getWhoClicked().sendMessage(ChatColor.GREEN + JOINED_GAME_TRANS.translate(Main.TRANSLATE_PACKAGE_ID, event.getWhoClicked().getUniqueId().toString()).replaceAll("\\{\\{0\\}\\}", name));
-                    });//TODO: Check if this is thread safe (if it's not: check severity)
+                    () -> playerJoiner.join(event.getWhoClicked(), gameDescription.getName(), gameDescription.getFilter()));
             Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> throttled = false, THROTTLE_TIMEOUT);
+
+
         }
 
         @Override
@@ -154,8 +149,5 @@ public class SimpleInventoryProvider implements InventoryProvider {
     }
 
     private static final TranslatableString DEFAULT_IS_NAME = new TranslatableString("is.name.default", "Unknown Name");
-    private static final TranslatableString JOINING_TRANS = new TranslatableString("joining", "Joining {{0}}...");
-    private static final TranslatableString JOINED_GAME_TRANS = new TranslatableString("joinedgame", "You've joined {{0}}, the system is sending you now!");
-    private static final TranslatableString NO_SERVER_FOUND_TRANS = new TranslatableString("noserverfound", "No server was found, try again or contact an administrator.");
     private static final ItemStack DEFAULT_PLAIN_IS = new ItemStack(Material.EMERALD);
 }

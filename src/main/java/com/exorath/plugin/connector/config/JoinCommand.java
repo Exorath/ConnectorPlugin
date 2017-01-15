@@ -16,18 +16,34 @@
 
 package com.exorath.plugin.connector.config;
 
+import com.exorath.service.connector.res.Filter;
+import com.exorath.service.translation.api.TranslatableString;
 
 import java.util.Collection;
-import java.util.HashMap;
 
 /**
- * Created by toonsev on 1/11/2017.
+ * Created by toonsev on 1/15/2017.
  */
-public interface ConfigProvider {
-    HashMap<Integer, GameDescription> getGamesBySlot();
-    Collection<JoinCommand> getJoinCommands();
+public class JoinCommand {
+    private TranslatableString name;
+    private Filter filter;
+    private Collection<TranslatableString> cmds;
 
-    GamesItem getGamesItem();
+    public JoinCommand(TranslatableString name, Filter filter, Collection<TranslatableString> cmds) {
+        this.name = name;
+        this.filter = filter;
+        this.cmds = cmds;
+    }
 
-    void reload();
+    public TranslatableString getName() {
+        return name;
+    }
+
+    public Filter getFilter() {
+        return filter;
+    }
+
+    public Collection<TranslatableString> getCmds() {
+        return cmds;
+    }
 }

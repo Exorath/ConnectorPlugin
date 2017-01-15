@@ -16,13 +16,14 @@
 
 package com.exorath.plugin.connector.config;
 
+import com.exorath.plugin.connector.Main;
 import com.exorath.service.connector.res.Filter;
 import com.exorath.service.translation.api.TranslatableString;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import java.util.HashMap;
-import java.util.List;
+
+import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -36,6 +37,8 @@ public class YamlConfigProvider implements ConfigProvider {
 
     private HashMap<Integer, GameDescription> gamesBySlot = new HashMap<>();
 
+    private Collection<JoinCommand> joinCommands = new HashSet<>();
+
     public YamlConfigProvider(FileConfiguration fileConfiguration) {
         this.fileConfiguration = fileConfiguration;
         reload();
@@ -43,18 +46,48 @@ public class YamlConfigProvider implements ConfigProvider {
 
     @Override
     public void reload() {
+        loadInvSection(fileConfiguration.getConfigurationSection("inv"));
+        loadCommandsSection(fileConfiguration.getConfigurationSection("joincommands"));
+        //cmd /hub
+        //->  hub:
+        //      filter:
+        //        gameId: hub
+        //      cmds: (translated)
+        //      - hub
+        //      - lobby
+        //      - back
+    }
+
+    private void loadCommandsSection(ConfigurationSection commandsSection){
+        joinCommands.clear();
+        if(commandsSection == null)
+            return;
+        for(String key : commandsSection.getKeys(false)){
+            ConfigurationSection commandSection = commandsSection.getConfigurationSection(key);
+            if(!commandSection.isList("cmds"))
+                continue;
+            TranslatableString name = convert(commandSection.getString("name", "Unknown"));
+            Set<TranslatableString> cmds = commandSection.getStringList("cmds").stream().map(cmd -> convert(cmd)).collect(Collectors.toSet());
+            Filter filter = getFilter(commandSection.getConfigurationSection("filter"));
+            joinCommands.add(new JoinCommand(name, filter, cmds));
+        }
+
+    }
+
+    private void loadInvSection(ConfigurationSection invSection) {
         gamesBySlot.clear();
-        loadGamesItem(fileConfiguration.getConfigurationSection("gamesitem"));
+        gamesItem = null;
+        if (invSection == null)
+            return;
+        loadGamesItem(invSection.getConfigurationSection("gamesitem"));
+        ConfigurationSection gamesSection = invSection.getConfigurationSection("games");
 
-        ConfigurationSection configurationSection = fileConfiguration.getConfigurationSection("games");
-
-        if(configurationSection == null){
+        if (invSection == null) {
             Bukkit.getLogger().log(Level.WARNING, "Did not find games (connectorplugin)");
             return;
         }
-
-        for (String key : configurationSection.getKeys(false))
-            loadGameSection(configurationSection.getConfigurationSection(key));
+        for (String key : gamesSection.getKeys(false))
+            loadGameSection(gamesSection.getConfigurationSection(key));
     }
 
     @Override
@@ -63,38 +96,44 @@ public class YamlConfigProvider implements ConfigProvider {
     }
 
     @Override
+    public Collection<JoinCommand> getJoinCommands() {
+        return joinCommands;
+    }
+
+    @Override
     public HashMap<Integer, GameDescription> getGamesBySlot() {
         return gamesBySlot;
     }
 
-    private void loadGamesItem(ConfigurationSection config){
-        if(config == null)
+    private void loadGamesItem(ConfigurationSection config) {
+        if (config == null)
             return;
-        if(!config.isInt("slot"))
+        if (!config.isInt("slot"))
             return;
         this.gamesItem = new GamesItem(config.getInt("slot"), config.getItemStack("plainitem"));
     }
+
     private void loadGameSection(ConfigurationSection config) {
-        if(config == null)
+        if (config == null)
             return;
-        if(!config.isInt("slot"))
+        if (!config.isInt("slot"))
             return;
 
         SimpleGameDescription simpleGameDescription = new SimpleGameDescription();
 
         String name = config.getString("name", null);
-        simpleGameDescription.setName(new TranslatableString(name, name));
+        simpleGameDescription.setName(convert(name));
 
 
         String shortDescription = config.getString("description.short", null);
         if (shortDescription != null)
-            simpleGameDescription.setShortDescription(new TranslatableString(shortDescription, shortDescription));
+            simpleGameDescription.setShortDescription(convert(shortDescription));
 
         List<String> longDescription = config.getStringList("description.long");
         if (longDescription != null)
             simpleGameDescription.setLongDescription(
                     longDescription.stream()
-                            .map(line -> new TranslatableString(line, line))
+                            .map(line -> convert(line))
                             .collect(Collectors.toList()));
 
         simpleGameDescription.setFilter(getFilter(config.getConfigurationSection("filter")));
@@ -102,14 +141,19 @@ public class YamlConfigProvider implements ConfigProvider {
 
         gamesBySlot.put(config.getInt("slot"), simpleGameDescription);
     }
-    private Filter getFilter(ConfigurationSection filterSection){
+
+    private Filter getFilter(ConfigurationSection filterSection) {
         Filter filter = new Filter();
-        if(filterSection == null)
+        if (filterSection == null)
             return filter;
         filter.withGameId(filterSection.getString("gameId"))
                 .withMapId(filterSection.getString("mapId"))
                 .withFlavorId(filterSection.getString("flavorId"));
         return filter;
+    }
+
+    private TranslatableString convert(String text){
+        return new TranslatableString(text, text);
     }
 
 }
