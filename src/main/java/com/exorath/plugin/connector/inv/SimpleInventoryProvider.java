@@ -16,8 +16,7 @@
 
 package com.exorath.plugin.connector.inv;
 
-import com.exorath.plugin.connector.ConfigProvider;
-import com.exorath.plugin.connector.InventoryProvider;
+import com.exorath.plugin.connector.config.ConfigProvider;
 import com.exorath.plugin.connector.Main;
 import com.exorath.plugin.connector.config.GameDescription;
 import com.exorath.service.translation.api.TranslatableString;
@@ -37,7 +36,7 @@ import java.util.stream.Collectors;
 /**
  * Todo: Maybe rate limit and cache inventory creation?
  * TODO: Create static inventory registry.
- * TODO: Inject player count
+ * TODO: Inject player count and live game data
  * Created by toonsev on 1/13/2017.
  */
 public class SimpleInventoryProvider implements InventoryProvider {
@@ -88,7 +87,7 @@ public class SimpleInventoryProvider implements InventoryProvider {
 
         if(gameDescription.getLongDescription() != null && gameDescription.getLongDescription().size() > 0){
             List<String> lore = gameDescription.getLongDescription().stream()
-                    .map(translatableString -> translatableName.translate(Main.TRANSLATE_PACKAGE_ID, player.getUniqueId().toString()))
+                    .map(translatableString -> translatableString.translate(Main.TRANSLATE_PACKAGE_ID, player.getUniqueId().toString()))
                     .map(str -> containsColor(str.substring(0, 2)) ? str : ChatColor.GRAY + str).collect(Collectors.toList());
             lore.add(0, "");
             im.setLore(lore);

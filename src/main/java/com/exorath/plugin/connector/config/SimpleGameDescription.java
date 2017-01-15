@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.exorath.plugin.connector;
+package com.exorath.plugin.connector.config;
 
 import com.exorath.plugin.connector.config.GameDescription;
 import com.exorath.service.connector.res.Filter;

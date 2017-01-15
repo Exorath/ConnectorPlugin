@@ -17,11 +17,18 @@
 package com.exorath.plugin.connector;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 
 /**
- * Created by toonsev on 1/13/2017.
+ * Created by toonsev on 1/2/2017.
  */
-public interface InventoryProvider {
-    Inventory getGameInv(Player player);
+public interface InventoryListener {
+    
+    Inventory getInventory();
+
+    void onClick(InventoryClickEvent event);
+
+
+    void onClose(Player player);
 }

@@ -16,6 +16,11 @@
 
 package com.exorath.plugin.connector;
 
+import com.exorath.plugin.connector.config.ConfigProvider;
+import com.exorath.plugin.connector.config.YamlConfigProvider;
+import com.exorath.plugin.connector.inv.InventoryProvider;
+import com.exorath.plugin.connector.inv.SimpleInventoryProvider;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -23,8 +28,23 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class Main extends JavaPlugin {
     public static final String TRANSLATE_PACKAGE_ID = "plugin.connector";
+
+    private static InventoryRegistry inventoryRegistry;
+
     @Override
     public void onEnable() {
+        ConfigProvider configProvider = new YamlConfigProvider(getConfig());
+        InventoryProvider inventoryProvider = new SimpleInventoryProvider(configProvider);
 
+        InventoryManager inventoryManager = new InventoryManager(configProvider, inventoryProvider);
+        Bukkit.getPluginManager().registerEvents(inventoryManager, this);
+
+        inventoryRegistry = new InventoryRegistry();//using a static inventory event registry for now.
+        Bukkit.getPluginManager().registerEvents(inventoryRegistry, this);
+    }
+
+
+    public static InventoryRegistry getInventoryRegistry() {
+        return inventoryRegistry;
     }
 }
