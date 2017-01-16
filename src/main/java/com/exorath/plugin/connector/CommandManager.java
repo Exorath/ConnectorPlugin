@@ -45,7 +45,7 @@ public class CommandManager implements Listener {
     }
 
     @EventHandler
-    public void onPreCMD(PlayerCommandPreprocessEvent event) { 
+    public void onPreCMD(PlayerCommandPreprocessEvent event) {
         String msg = event.getMessage();
         if (!msg.startsWith("/"))
             return;
