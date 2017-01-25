@@ -8,3 +8,4 @@
 /bin1/
 /target/
 *.class
+.travis.yml.swp
