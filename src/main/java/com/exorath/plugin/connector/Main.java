@@ -37,7 +37,12 @@ public class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        this.connectorServiceAPI = new ConnectorServiceAPI("http://localhost:8080");//replace this after testing
+        String address = getConnectorServiceAddress();
+        if(address == null) {
+            System.out.println("ConnectorPlugin no CONNECTOR_SERVICE_ADDRESS env var defined.");
+            return;
+        }
+        this.connectorServiceAPI = new ConnectorServiceAPI(address);
         PlayerJoiner playerJoiner = new PlayerJoiner(connectorServiceAPI);
 
         //Loads in the ymlconfig as a config provider
@@ -54,8 +59,9 @@ public class Main extends JavaPlugin {
         inventoryRegistry = new InventoryRegistry();
         Bukkit.getPluginManager().registerEvents(inventoryRegistry, this);
     }
-
-
+    private String getConnectorServiceAddress(){
+       return System.getenv("CONNECTOR_SERVICE_ADDRESS");
+    }
     public static InventoryRegistry getInventoryRegistry() {
         return inventoryRegistry;
     }

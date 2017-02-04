@@ -16,7 +16,6 @@
 
 package com.exorath.plugin.connector.config;
 
-import com.exorath.plugin.connector.Main;
 import com.exorath.service.connector.res.Filter;
 import com.exorath.service.translation.api.TranslatableString;
 import org.bukkit.Bukkit;
@@ -104,6 +103,7 @@ public class YamlConfigProvider implements ConfigProvider {
     public HashMap<Integer, GameDescription> getGamesBySlot() {
         return gamesBySlot;
     }
+
 
     private void loadGamesItem(ConfigurationSection config) {
         if (config == null)
