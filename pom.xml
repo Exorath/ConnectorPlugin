@@ -37,7 +37,7 @@
                         <configuration>
                             <filters>
                                 <filter>
-                                    <artifact>MapService:MapService</artifact>
+                                    <artifact>ConnectorPlugin:ConnectorPlugin</artifact>
                                     <includes>
                                         <include>**</include>
                                     </includes>
