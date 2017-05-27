@@ -16,10 +16,12 @@
 
 package com.exorath.plugin.connector;
 
+import com.exorath.clickents.ClickEntAPI;
 import com.exorath.plugin.connector.config.ConfigProvider;
 import com.exorath.plugin.connector.config.YamlConfigProvider;
 import com.exorath.plugin.connector.inv.InventoryProvider;
 import com.exorath.plugin.connector.inv.SimpleInventoryProvider;
+import com.exorath.plugin.connector.world.WorldLoadHandler;
 import com.exorath.service.connector.api.ConnectorServiceAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -58,6 +60,9 @@ public class Main extends JavaPlugin {
         //Set up a static inventory registry for event propagation
         inventoryRegistry = new InventoryRegistry();
         Bukkit.getPluginManager().registerEvents(inventoryRegistry, this);
+        ClickEntAPI clickEntAPI = new ClickEntAPI(this);
+
+        Bukkit.getPluginManager().registerEvents(new WorldLoadHandler(playerJoiner, clickEntAPI), this);
     }
     private String getConnectorServiceAddress(){
        return System.getenv("CONNECTOR_SERVICE_ADDRESS");

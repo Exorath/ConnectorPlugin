@@ -111,5 +111,20 @@
             <artifactId>translationservice</artifactId>
             <version>1.1.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.Exorath</groupId>
+            <artifactId>ClickableEntities</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.Exorath</groupId>
+            <artifactId>ExoCommons</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.Exorath</groupId>
+            <artifactId>ExoHUD</artifactId>
+            <version>1.0.13</version>
+        </dependency>
     </dependencies>
 </project>
