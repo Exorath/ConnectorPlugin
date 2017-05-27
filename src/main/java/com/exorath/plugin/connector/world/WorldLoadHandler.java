@@ -35,6 +35,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -71,7 +72,7 @@ public class WorldLoadHandler implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntitySpawn(EntitySpawnEvent event){
-        if(event.getEntity().hasMetadata("connector"))
+        if(event.getEntity().getType() == EntityType.ARMOR_STAND)
             event.setCancelled(false);
     }
 
