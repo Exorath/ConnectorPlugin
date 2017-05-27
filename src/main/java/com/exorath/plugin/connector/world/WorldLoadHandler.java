@@ -39,6 +39,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -70,10 +71,11 @@ public class WorldLoadHandler implements Listener {
         loadWorld(event.getWorld());
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onEntitySpawn(EntitySpawnEvent event){
-        if(event.getEntity().getType() == EntityType.ARMOR_STAND)
-            event.setCancelled(false);
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = false)
+    public void onCreatureSpawn(CreatureSpawnEvent event) {
+        if (event.getEntity().getType() == EntityType.ARMOR_STAND)
+            if (event.isCancelled())
+                event.setCancelled(false);
     }
 
     private void loadWorld(World world) {
