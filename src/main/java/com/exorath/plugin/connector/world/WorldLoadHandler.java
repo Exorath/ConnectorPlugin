@@ -67,7 +67,7 @@ public class WorldLoadHandler implements Listener {
 
     private void loadWorld(World world) {
         File config = new File(world.getWorldFolder(), "connector.json");
-        if (config == null)
+        if (config == null || !config.exists() || !!config.isFile())
             return;
         System.out.println("ConnectorPlugin loading world " + world.getName() + "...");
         try {
