@@ -36,8 +36,12 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.world.WorldLoadEvent;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.LazyMetadataValue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -65,6 +69,12 @@ public class WorldLoadHandler implements Listener {
         loadWorld(event.getWorld());
     }
 
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onEntitySpawn(EntitySpawnEvent event){
+        if(event.getEntity().hasMetadata("connector"))
+            event.setCancelled(false);
+    }
+
     private void loadWorld(World world) {
         File config = new File(world.getWorldFolder(), "connector.json");
         if (config == null || !config.exists() || !config.isFile())
@@ -88,17 +98,19 @@ public class WorldLoadHandler implements Listener {
     private Set<String> clickSpam = new HashSet<>();
 
     private void loadNpc(World world, ConnectorNPC npc) {
+        System.out.println("Loading an npc");
         if (npc.getArmorStand() != null) {
+            System.out.println("loading an armorstand");
             ArmorStand armorStand = npc.getArmorStand().load(world);
             armorStand.setGravity(false);
             armorStand.setAI(false);
             armorStand.setSilent(true);
             armorStand.setCollidable(false);
             armorStand.setInvulnerable(true);
+            armorStand.setMetadata("connector", new FixedMetadataValue(Main.getInstance(), ""));
 
             makeClickable(armorStand, npc);
             addHologram(armorStand, npc);
-
         }
     }
 
