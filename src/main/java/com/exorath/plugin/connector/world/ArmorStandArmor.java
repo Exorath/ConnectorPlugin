@@ -27,8 +27,13 @@ public class ArmorStandArmor {
     private JsonObject leggings;
     private JsonObject boots;
     private JsonObject hand;
+    private JsonObject offHand;
 
     public ArmorStandArmor() {
+    }
+
+    public JsonObject getOffHand() {
+        return offHand;
     }
 
     public JsonObject getHelmet() {

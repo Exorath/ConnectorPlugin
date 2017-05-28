@@ -141,6 +141,8 @@ public class ArmorStandConfiguration {
                     armorStand.setBoots(ItemStackSerialize.toItemStack(armor.getBoots()));
                 if (armor.getHand() != null)
                     armorStand.setItemInHand(ItemStackSerialize.toItemStack(armor.getHand()));
+                if(armor.getOffHand() != null)
+                    armorStand.getEquipment().setItemInOffHand(ItemStackSerialize.toItemStack(armor.getOffHand()));
             }
             loaded = true;
             return armorStand;
