@@ -40,6 +40,8 @@ public class ArmorStandConfiguration {
     private Angle leftLegPose;
     private Angle rightLegPose;
 
+
+    private transient boolean loaded = false;
     private boolean arms = false;
     private boolean basePlate = false;
     private boolean small = false;
@@ -105,7 +107,10 @@ public class ArmorStandConfiguration {
     public ArmorStand load(World world) {
         System.out.println("Spawning armorstand at [" + x + "," + y + "," + z + "]");
         ArmorStand armorStand = world.spawn(new Location(world, x, y, z), ArmorStand.class,
-                armorStand1 -> armorStand1.setMetadata("doNotDespawn", new FixedMetadataValue(Main.getInstance(), "")));
+                armorStand1 -> {
+                    armorStand1.setMetadata("connector", new FixedMetadataValue(Main.getInstance(), ""));
+                    armorStand1.setMetadata("doNotDespawn", new FixedMetadataValue(Main.getInstance(), ""));
+                });
         armorStand.setArms(arms);
         armorStand.setBasePlate(basePlate);
         if (headPose != null)
@@ -133,6 +138,15 @@ public class ArmorStandConfiguration {
             if (armor.getHand() != null)
                 armorStand.setItemInHand(ItemStackSerialize.toItemStack(armor.getHand()));
         }
+        loaded = true;
         return armorStand;
+    }
+
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
+    }
+
+    public boolean isLoaded() {
+        return loaded;
     }
 }

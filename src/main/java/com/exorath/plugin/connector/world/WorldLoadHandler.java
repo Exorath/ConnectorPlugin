@@ -35,12 +35,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.LazyMetadataValue;
@@ -48,9 +51,7 @@ import org.bukkit.metadata.LazyMetadataValue;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by toonsev on 5/27/2017.
@@ -59,6 +60,8 @@ public class WorldLoadHandler implements Listener {
     private static final Gson GSON = new Gson();
     private ClickEntAPI clickEntAPI;
     private PlayerJoiner playerJoiner;
+
+    private HashMap<Entity, ConnectorNPC> npcs = new HashMap<>();
 
     public WorldLoadHandler(PlayerJoiner playerJoiner, ClickEntAPI clickEntAPI) {
         this.playerJoiner = playerJoiner;
@@ -73,9 +76,25 @@ public class WorldLoadHandler implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = false)
     public void onCreatureSpawn(CreatureSpawnEvent event) {
-        if (event.getEntity().getType() == EntityType.ARMOR_STAND)
+        if (event.getEntity().hasMetadata("connector"))
             if (event.isCancelled())
                 event.setCancelled(false);
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void onChunkLoad(ChunkLoadEvent event){
+        for (Map.Entry<Entity, ConnectorNPC> entry : npcs.entrySet())
+            loadArmorStand(entry.getKey().getWorld(), entry.getValue());
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void onChunkUnloadEvent(ChunkUnloadEvent event){
+        for (Entity entity : event.getChunk().getEntities()) {
+            if(entity.hasMetadata("connector")) {
+                entity.remove();
+                npcs.get(entity).getArmorStand().setLoaded(false);
+            }
+        }
     }
 
     private void loadWorld(World world) {
@@ -103,19 +122,24 @@ public class WorldLoadHandler implements Listener {
     private void loadNpc(World world, ConnectorNPC npc) {
         System.out.println("Loading an npc");
         if (npc.getArmorStand() != null) {
-            System.out.println("loading an armorstand");
-            new Location(world, npc.getArmorStand().getX(), npc.getArmorStand().getY(), npc.getArmorStand().getZ()).getChunk().load();
-            ArmorStand armorStand = npc.getArmorStand().load(world);
-            armorStand.setGravity(false);
-            armorStand.setAI(false);
-            armorStand.setSilent(true);
-            armorStand.setCollidable(false);
-            armorStand.setInvulnerable(true);
-            armorStand.setMetadata("connector", new FixedMetadataValue(Main.getInstance(), ""));
-
+            ArmorStand armorStand = loadArmorStand(world, npc);
             makeClickable(armorStand, npc);
             addHologram(armorStand, npc);
         }
+    }
+
+    private ArmorStand loadArmorStand(World world, ConnectorNPC npc){
+        if(npc.getArmorStand().isLoaded())
+            return null;
+        System.out.println("loading an armorstand");
+        new Location(world, npc.getArmorStand().getX(), npc.getArmorStand().getY(), npc.getArmorStand().getZ()).getChunk().load();
+        ArmorStand armorStand = npc.getArmorStand().load(world);
+        armorStand.setGravity(false);
+        armorStand.setAI(false);
+        armorStand.setSilent(true);
+        armorStand.setCollidable(false);
+        armorStand.setInvulnerable(true);
+        return armorStand;
     }
 
     private void addHologram(ArmorStand armorStand, ConnectorNPC npc) {
