@@ -108,7 +108,7 @@ public class ArmorStandConfiguration {
     }
 
     public ArmorStand load(World world) {
-        System.out.println("Spawning armorstand at [" + x + "," + y + "," + z + "]");
+        System.out.println("Spawning armorstand at [" + x + "," + y + "," + z +  "(" + yaw + "," + pitch + ")]");
         ArmorStand armorStand = world.spawn(new Location(world, x, y, z, yaw, pitch), ArmorStand.class,
                 armorStand1 -> {
                     armorStand1.setMetadata("connector", new FixedMetadataValue(Main.getInstance(), ""));
