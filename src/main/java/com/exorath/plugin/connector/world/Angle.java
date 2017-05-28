@@ -21,12 +21,33 @@ import org.bukkit.util.EulerAngle;
 /**
  * Created by toonsev on 5/27/2017.
  */
-public class Angle extends EulerAngle {
+public class Angle {
+    private double x;
+    private double y;
+    private double z;
+
     public Angle(double x, double y, double z) {
-        super(x, y, z);
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
-    public Angle(){
-        this(0, 0, 0);
+    public Angle() {
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public double getZ() {
+        return z;
+    }
+
+    public EulerAngle toEuler(){
+        return new EulerAngle(x, y, z);
     }
 }

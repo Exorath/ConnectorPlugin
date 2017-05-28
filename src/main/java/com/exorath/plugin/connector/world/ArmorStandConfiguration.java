@@ -118,17 +118,17 @@ public class ArmorStandConfiguration {
                         armorStand1.setArms(arms);
                         armorStand1.setBasePlate(basePlate);
                         if (headPose != null)
-                            armorStand1.setHeadPose(headPose);
+                            armorStand1.setHeadPose(headPose.toEuler());
                         if (bodyPose != null)
-                            armorStand1.setBodyPose(bodyPose);
+                            armorStand1.setBodyPose(bodyPose.toEuler());
                         if (leftArmPose != null)
-                            armorStand1.setLeftArmPose(leftArmPose);
+                            armorStand1.setLeftArmPose(leftArmPose.toEuler());
                         if (rightArmPose != null)
-                            armorStand1.setRightArmPose(rightArmPose);
+                            armorStand1.setRightArmPose(rightArmPose.toEuler());
                         if (leftLegPose != null)
-                            armorStand1.setLeftLegPose(leftLegPose);
+                            armorStand1.setLeftLegPose(leftLegPose.toEuler());
                         if (rightLegPose != null)
-                            armorStand1.setRightLegPose(rightLegPose);
+                            armorStand1.setRightLegPose(rightLegPose.toEuler());
                         armorStand1.setSmall(small);
                         if (armor != null) {
                             if (armor.getHelmet() != null)
