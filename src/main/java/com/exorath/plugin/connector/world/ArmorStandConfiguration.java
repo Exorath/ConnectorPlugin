@@ -101,6 +101,7 @@ public class ArmorStandConfiguration {
     }
 
     public ArmorStand load(World world) {
+        System.out.println("Spawning armorstand at [" + x + "," + y + "," + z + "]");
         ArmorStand armorStand = (ArmorStand) world.spawnEntity(new Location(world, x, y, z), EntityType.ARMOR_STAND);
         armorStand.setArms(arms);
         armorStand.setBasePlate(basePlate);

@@ -104,6 +104,7 @@ public class WorldLoadHandler implements Listener {
         System.out.println("Loading an npc");
         if (npc.getArmorStand() != null) {
             System.out.println("loading an armorstand");
+            new Location(world, npc.getArmorStand().getX(), npc.getArmorStand().getY(), npc.getArmorStand().getZ()).getChunk().load();
             ArmorStand armorStand = npc.getArmorStand().load(world);
             armorStand.setGravity(false);
             armorStand.setAI(false);
