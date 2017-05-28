@@ -19,7 +19,6 @@ package com.exorath.plugin.connector.world;
 import com.exorath.clickents.ClickEntAPI;
 import com.exorath.clickents.api.ClickableEntity;
 import com.exorath.exoHUD.DisplayProperties;
-import com.exorath.exoHUD.HUDRemover;
 import com.exorath.exoHUD.HUDText;
 import com.exorath.exoHUD.locations.row.HologramLocation;
 import com.exorath.exoHUD.removers.NeverRemover;
@@ -36,17 +35,13 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.metadata.LazyMetadataValue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -82,17 +77,18 @@ public class WorldLoadHandler implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
-    public void onChunkLoad(ChunkLoadEvent event){
+    public void onChunkLoad(ChunkLoadEvent event) {
         for (Map.Entry<Entity, ConnectorNPC> entry : npcs.entrySet())
             loadArmorStand(entry.getKey().getWorld(), entry.getValue());
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
-    public void onChunkUnloadEvent(ChunkUnloadEvent event){
+    public void onChunkUnloadEvent(ChunkUnloadEvent event) {
         for (Entity entity : event.getChunk().getEntities()) {
-            if(entity.hasMetadata("connector")) {
+            if (entity.hasMetadata("connector")) {
                 entity.remove();
                 npcs.get(entity).getArmorStand().setLoaded(false);
+                clickEntAPI.removeEntity(entity);
             }
         }
     }
@@ -122,28 +118,31 @@ public class WorldLoadHandler implements Listener {
     private void loadNpc(World world, ConnectorNPC npc) {
         System.out.println("Loading an npc");
         if (npc.getArmorStand() != null) {
-            ArmorStand armorStand = loadArmorStand(world, npc);
-            makeClickable(armorStand, npc);
-            addHologram(armorStand, npc);
+            addHologram(world, npc);
+            loadArmorStand(world, npc);
         }
     }
 
-    private ArmorStand loadArmorStand(World world, ConnectorNPC npc){
-        if(npc.getArmorStand().isLoaded())
+    private ArmorStand loadArmorStand(World world, ConnectorNPC npc) {
+        if (npc.getArmorStand().isLoaded())
             return null;
         System.out.println("loading an armorstand");
-        new Location(world, npc.getArmorStand().getX(), npc.getArmorStand().getY(), npc.getArmorStand().getZ()).getChunk().load();
         ArmorStand armorStand = npc.getArmorStand().load(world);
+        if (armorStand == null) {
+            System.out.println("Armorstand loading halted (chunk not loaded)");
+            return null;
+        }
         armorStand.setGravity(false);
         armorStand.setAI(false);
         armorStand.setSilent(true);
         armorStand.setCollidable(false);
         armorStand.setInvulnerable(true);
+        makeClickable(armorStand, npc);
         return armorStand;
     }
 
-    private void addHologram(ArmorStand armorStand, ConnectorNPC npc) {
-        Location headLoc = armorStand.getLocation().clone().add(0, 2.3d, 0);
+    private void addHologram(World world, ConnectorNPC npc) {
+        Location headLoc = new Location(world, npc.getArmorStand().getX(), npc.getArmorStand().getY() + 2.5d, npc.getArmorStand().getZ());
         HologramLocation hologram = new HologramLocation(headLoc);
         addText(hologram, ChatColorText.markup(PlainText.plain(npc.getName())).color(ChatColor.AQUA), 0);
         addText(hologram, ChatColorText.markup(PlainText.plain("X Players")).color(ChatColor.YELLOW), -2d);

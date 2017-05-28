@@ -114,7 +114,7 @@
         <dependency>
             <groupId>com.github.Exorath</groupId>
             <artifactId>ClickableEntities</artifactId>
-            <version>0.0.1</version>
+            <version>0.0.3</version>
         </dependency>
         <dependency>
             <groupId>com.github.Exorath</groupId>

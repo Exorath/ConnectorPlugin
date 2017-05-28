@@ -108,41 +108,44 @@ public class ArmorStandConfiguration {
     }
 
     public ArmorStand load(World world) {
-        System.out.println("Spawning armorstand at [" + x + "," + y + "," + z +  "(" + yaw + "," + pitch + ")]");
-        ArmorStand armorStand = world.spawn(new Location(world, x, y, z, yaw, pitch), ArmorStand.class,
-                armorStand1 -> {
-                    armorStand1.setMetadata("connector", new FixedMetadataValue(Main.getInstance(), ""));
-                    armorStand1.setMetadata("doNotDespawn", new FixedMetadataValue(Main.getInstance(), ""));
-                });
-        armorStand.setArms(arms);
-        armorStand.setBasePlate(basePlate);
-        if (headPose != null)
-            armorStand.setHeadPose(headPose);
-        if (bodyPose != null)
-            armorStand.setBodyPose(bodyPose);
-        if (leftArmPose != null)
-            armorStand.setLeftArmPose(leftArmPose);
-        if (rightArmPose != null)
-            armorStand.setRightArmPose(rightArmPose);
-        if (leftLegPose != null)
-            armorStand.setLeftLegPose(leftLegPose);
-        if (rightLegPose != null)
-            armorStand.setRightLegPose(rightLegPose);
-        armorStand.setSmall(small);
-        if (armor != null) {
-            if (armor.getHelmet() != null)
-                armorStand.setHelmet(ItemStackSerialize.toItemStack(armor.getHelmet()));
-            if (armor.getChestPlate() != null)
-                armorStand.setChestplate(ItemStackSerialize.toItemStack(armor.getChestPlate()));
-            if (armor.getLeggings() != null)
-                armorStand.setLeggings(ItemStackSerialize.toItemStack(armor.getLeggings()));
-            if (armor.getBoots() != null)
-                armorStand.setBoots(ItemStackSerialize.toItemStack(armor.getBoots()));
-            if (armor.getHand() != null)
-                armorStand.setItemInHand(ItemStackSerialize.toItemStack(armor.getHand()));
+        if(world.getChunkAt((int) x, (int) z).isLoaded()) {
+            System.out.println("Spawning armorstand at [" + x + "," + y + "," + z + "(" + yaw + "," + pitch + ")]");
+            ArmorStand armorStand = world.spawn(new Location(world, x, y, z, yaw, pitch), ArmorStand.class,
+                    armorStand1 -> {
+                        armorStand1.setMetadata("connector", new FixedMetadataValue(Main.getInstance(), ""));
+                        armorStand1.setMetadata("doNotDespawn", new FixedMetadataValue(Main.getInstance(), ""));
+                    });
+            armorStand.setArms(arms);
+            armorStand.setBasePlate(basePlate);
+            if (headPose != null)
+                armorStand.setHeadPose(headPose);
+            if (bodyPose != null)
+                armorStand.setBodyPose(bodyPose);
+            if (leftArmPose != null)
+                armorStand.setLeftArmPose(leftArmPose);
+            if (rightArmPose != null)
+                armorStand.setRightArmPose(rightArmPose);
+            if (leftLegPose != null)
+                armorStand.setLeftLegPose(leftLegPose);
+            if (rightLegPose != null)
+                armorStand.setRightLegPose(rightLegPose);
+            armorStand.setSmall(small);
+            if (armor != null) {
+                if (armor.getHelmet() != null)
+                    armorStand.setHelmet(ItemStackSerialize.toItemStack(armor.getHelmet()));
+                if (armor.getChestPlate() != null)
+                    armorStand.setChestplate(ItemStackSerialize.toItemStack(armor.getChestPlate()));
+                if (armor.getLeggings() != null)
+                    armorStand.setLeggings(ItemStackSerialize.toItemStack(armor.getLeggings()));
+                if (armor.getBoots() != null)
+                    armorStand.setBoots(ItemStackSerialize.toItemStack(armor.getBoots()));
+                if (armor.getHand() != null)
+                    armorStand.setItemInHand(ItemStackSerialize.toItemStack(armor.getHand()));
+            }
+            loaded = true;
+            return armorStand;
         }
-        loaded = true;
-        return armorStand;
+        return null;
     }
 
     public void setLoaded(boolean loaded) {
