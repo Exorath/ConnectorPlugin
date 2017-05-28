@@ -114,36 +114,38 @@ public class ArmorStandConfiguration {
                     armorStand1 -> {
                         armorStand1.setMetadata("connector", new FixedMetadataValue(Main.getInstance(), ""));
                         armorStand1.setMetadata("doNotDespawn", new FixedMetadataValue(Main.getInstance(), ""));
+
+                        armorStand1.setArms(arms);
+                        armorStand1.setBasePlate(basePlate);
+                        if (headPose != null)
+                            armorStand1.setHeadPose(headPose);
+                        if (bodyPose != null)
+                            armorStand1.setBodyPose(bodyPose);
+                        if (leftArmPose != null)
+                            armorStand1.setLeftArmPose(leftArmPose);
+                        if (rightArmPose != null)
+                            armorStand1.setRightArmPose(rightArmPose);
+                        if (leftLegPose != null)
+                            armorStand1.setLeftLegPose(leftLegPose);
+                        if (rightLegPose != null)
+                            armorStand1.setRightLegPose(rightLegPose);
+                        armorStand1.setSmall(small);
+                        if (armor != null) {
+                            if (armor.getHelmet() != null)
+                                armorStand1.setHelmet(ItemStackSerialize.toItemStack(armor.getHelmet()));
+                            if (armor.getChestPlate() != null)
+                                armorStand1.setChestplate(ItemStackSerialize.toItemStack(armor.getChestPlate()));
+                            if (armor.getLeggings() != null)
+                                armorStand1.setLeggings(ItemStackSerialize.toItemStack(armor.getLeggings()));
+                            if (armor.getBoots() != null)
+                                armorStand1.setBoots(ItemStackSerialize.toItemStack(armor.getBoots()));
+                            if (armor.getHand() != null)
+                                armorStand1.setItemInHand(ItemStackSerialize.toItemStack(armor.getHand()));
+                            if(armor.getOffHand() != null)
+                                armorStand1.getEquipment().setItemInOffHand(ItemStackSerialize.toItemStack(armor.getOffHand()));
+                        }
                     });
-            armorStand.setArms(arms);
-            armorStand.setBasePlate(basePlate);
-            if (headPose != null)
-                armorStand.setHeadPose(headPose);
-            if (bodyPose != null)
-                armorStand.setBodyPose(bodyPose);
-            if (leftArmPose != null)
-                armorStand.setLeftArmPose(leftArmPose);
-            if (rightArmPose != null)
-                armorStand.setRightArmPose(rightArmPose);
-            if (leftLegPose != null)
-                armorStand.setLeftLegPose(leftLegPose);
-            if (rightLegPose != null)
-                armorStand.setRightLegPose(rightLegPose);
-            armorStand.setSmall(small);
-            if (armor != null) {
-                if (armor.getHelmet() != null)
-                    armorStand.setHelmet(ItemStackSerialize.toItemStack(armor.getHelmet()));
-                if (armor.getChestPlate() != null)
-                    armorStand.setChestplate(ItemStackSerialize.toItemStack(armor.getChestPlate()));
-                if (armor.getLeggings() != null)
-                    armorStand.setLeggings(ItemStackSerialize.toItemStack(armor.getLeggings()));
-                if (armor.getBoots() != null)
-                    armorStand.setBoots(ItemStackSerialize.toItemStack(armor.getBoots()));
-                if (armor.getHand() != null)
-                    armorStand.setItemInHand(ItemStackSerialize.toItemStack(armor.getHand()));
-                if(armor.getOffHand() != null)
-                    armorStand.getEquipment().setItemInOffHand(ItemStackSerialize.toItemStack(armor.getOffHand()));
-            }
+
             loaded = true;
             return armorStand;
         }
