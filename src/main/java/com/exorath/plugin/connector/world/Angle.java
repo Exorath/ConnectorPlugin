@@ -49,12 +49,14 @@ public class Angle {
     }
 
     public EulerAngle toEuler(){
-        return new EulerAngle(radiansToDegrees(x),radiansToDegrees(y), radiansToDegrees(z));
+        return new EulerAngle(degreesToRadians(x),degreesToRadians(y), degreesToRadians(z));
     }
 
 
-    private static double radiansToDegrees(double radians){
-        return (radians * 180d) / Math.PI;
+    public static double degreesToRadians(double degrees){
+
+        return (degrees * Math.PI)/180d;
 
     }
+
 }
