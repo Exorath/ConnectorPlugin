@@ -33,6 +33,9 @@ public class ArmorStandConfiguration {
     private double y;
     private double z;
 
+    private float yaw;
+    private float pitch;
+
     private Angle headPose;
     private Angle bodyPose;
     private Angle leftArmPose;
@@ -106,7 +109,7 @@ public class ArmorStandConfiguration {
 
     public ArmorStand load(World world) {
         System.out.println("Spawning armorstand at [" + x + "," + y + "," + z + "]");
-        ArmorStand armorStand = world.spawn(new Location(world, x, y, z), ArmorStand.class,
+        ArmorStand armorStand = world.spawn(new Location(world, x, y, z, yaw, pitch), ArmorStand.class,
                 armorStand1 -> {
                     armorStand1.setMetadata("connector", new FixedMetadataValue(Main.getInstance(), ""));
                     armorStand1.setMetadata("doNotDespawn", new FixedMetadataValue(Main.getInstance(), ""));
