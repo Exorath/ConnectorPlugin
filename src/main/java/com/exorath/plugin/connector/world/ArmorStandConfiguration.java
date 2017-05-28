@@ -18,10 +18,12 @@ package com.exorath.plugin.connector.world;
 
 
 import com.exorath.commons.ItemStackSerialize;
+import com.exorath.plugin.connector.Main;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
+import org.bukkit.metadata.FixedMetadataValue;
 
 /**
  * Created by toonsev on 5/27/2017.
@@ -102,7 +104,8 @@ public class ArmorStandConfiguration {
 
     public ArmorStand load(World world) {
         System.out.println("Spawning armorstand at [" + x + "," + y + "," + z + "]");
-        ArmorStand armorStand = (ArmorStand) world.spawnEntity(new Location(world, x, y, z), EntityType.ARMOR_STAND);
+        ArmorStand armorStand = world.spawn(new Location(world, x, y, z), ArmorStand.class,
+                armorStand1 -> armorStand1.setMetadata("doNotDespawn", new FixedMetadataValue(Main.getInstance(), "")));
         armorStand.setArms(arms);
         armorStand.setBasePlate(basePlate);
         if (headPose != null)
