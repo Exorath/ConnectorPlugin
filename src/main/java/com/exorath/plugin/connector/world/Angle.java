@@ -19,6 +19,7 @@ package com.exorath.plugin.connector.world;
 import org.bukkit.util.EulerAngle;
 
 /**
+ * ANGLES ARE IN DEGREES, EULERANGLES IN RADIANS!
  * Created by toonsev on 5/27/2017.
  */
 public class Angle {
@@ -48,6 +49,12 @@ public class Angle {
     }
 
     public EulerAngle toEuler(){
-        return new EulerAngle(x, y, z);
+        return new EulerAngle(radiansToDegrees(x),radiansToDegrees(y), radiansToDegrees(z));
+    }
+
+
+    private static double radiansToDegrees(double radians){
+        return (radians * 180d) / Math.PI;
+
     }
 }
